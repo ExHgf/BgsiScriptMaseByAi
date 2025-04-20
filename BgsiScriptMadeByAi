@@ -1,0 +1,122 @@
+-- BgsiScriptMaseByAi
+
+local devMenuVisible = false
+local password = "youwillneverlnowunlessyoumeet me" -- Set your desired password here
+local gui = game.Players.LocalPlayer:WaitForChild("PlayerGui")  -- Ensure PlayerGui is defined
+local uis = game:GetService("UserInputService")  -- UserInputService for hotkey functionality
+local buttonY = 0  -- Initialize the button Y position for the menu
+
+-- Create a new frame for the secret developer menu
+local devMenu = Instance.new("Frame", gui)
+devMenu.Size = UDim2.new(0, 450, 0, 500)
+devMenu.Position = UDim2.new(0, -500, 0.2, 0)
+devMenu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+devMenu.Visible = false
+Instance.new("UICorner", devMenu)
+
+-- Add a title to the secret developer menu
+local devTitle = Instance.new("TextLabel", devMenu)
+devTitle.Size = UDim2.new(1, 0, 0, 40)
+devTitle.BackgroundTransparency = 1
+devTitle.Text = "Secret Developer Menu"
+devTitle.Font = Enum.Font.FredokaOne
+devTitle.TextSize = 24
+devTitle.TextColor3 = Color3.fromRGB(255, 0, 255)
+
+-- Create the password prompt frame
+local passwordPrompt = Instance.new("Frame", gui)
+passwordPrompt.Size = UDim2.new(0, 300, 0, 200)
+passwordPrompt.Position = UDim2.new(0.5, -150, 0.5, -100)
+passwordPrompt.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+passwordPrompt.Visible = false
+Instance.new("UICorner", passwordPrompt)
+
+-- Add a label for the password prompt
+local promptLabel = Instance.new("TextLabel", passwordPrompt)
+promptLabel.Size = UDim2.new(1, 0, 0, 40)
+promptLabel.BackgroundTransparency = 1
+promptLabel.Text = "Enter Password to Access Developer Menu"
+promptLabel.Font = Enum.Font.FredokaOne
+promptLabel.TextSize = 18
+promptLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Add a textbox for password input (Invisible text input)
+local passwordBox = Instance.new("TextBox", passwordPrompt)
+passwordBox.Size = UDim2.new(1, -20, 0, 40)
+passwordBox.Position = UDim2.new(0, 10, 0, 50)
+passwordBox.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+passwordBox.Text = ""
+passwordBox.ClearTextOnFocus = true
+passwordBox.Font = Enum.Font.Gotham
+passwordBox.TextSize = 18
+passwordBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+passwordBox.ClearTextOnFocus = true
+passwordBox.TextTransparency = 1  -- Text hidden
+
+-- Add a button to submit password
+local submitButton = Instance.new("TextButton", passwordPrompt)
+submitButton.Size = UDim2.new(1, -20, 0, 40)
+submitButton.Position = UDim2.new(0, 10, 0, 100)
+submitButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+submitButton.Text = "Submit"
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextSize = 20
+submitButton.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", submitButton)
+
+-- Check the password entered
+submitButton.MouseButton1Click:Connect(function()
+    -- Make the textbox's text completely invisible (optional)
+    passwordBox.TextTransparency = 1
+
+    if passwordBox.Text == password then
+        passwordPrompt.Visible = false
+        devMenu.Visible = true
+    else
+        -- Show message if password is incorrect (and hide text input again)
+        local incorrectLabel = Instance.new("TextLabel", passwordPrompt)
+        incorrectLabel.Size = UDim2.new(1, 0, 0, 40)
+        incorrectLabel.Position = UDim2.new(0, 0, 0, 150)
+        incorrectLabel.BackgroundTransparency = 1
+        incorrectLabel.Text = "Incorrect Password!"
+        incorrectLabel.Font = Enum.Font.FredokaOne
+        incorrectLabel.TextSize = 18
+        incorrectLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+
+        -- Clear the password box text
+        passwordBox.Text = ""
+    end
+end)
+
+-- Developer Options buttons
+local function createDevButton(text, callback)
+    local btn = Instance.new("TextButton", devMenu)
+    btn.Size = UDim2.new(0, 430, 0, 40)
+    btn.Position = UDim2.new(0, 10, 0, buttonY)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    btn.Text = text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 20
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    
+    btn.MouseEnter:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    end)
+    btn.MouseLeave:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    end)
+
+    btn.MouseButton1Click:Connect(callback)
+    buttonY = buttonY + 50
+end
+
+-- Hotkey to toggle secret developer menu visibility (LeftControl)
+uis.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftControl then
+        -- Show password prompt when LeftControl is pressed
+        passwordPrompt.Visible = true
+    end
+end)
+
+print("[Secret Developer Menu] loaded successfully!")
